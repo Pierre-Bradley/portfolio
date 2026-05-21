@@ -1,0 +1,321 @@
+/* ========================================================= */
+/* VARIABLES ET RACINES GLOBALES                             */
+/* ========================================================= */
+:root {
+    --primary: #00ff9d;       /* Vert Néon Principal */
+    --secondary: #00b4ff;     /* Cyan d'accentuation */
+    --accent: #ff00aa;        /* Rose / Mauve Alerte */
+    --dark: #0a0a0a;          /* Fond Sombre secondaire */
+    --darker: #050505;        /* Fond Sombre Ultra Profond */
+    --light: #f0f0f0;         /* Blanc cassé pour le texte */
+}
+
+/* ========================================================= */
+/* RÈGLES DE BASE DU THEME                                   */
+/* ========================================================= */
+body {
+    background-color: var(--darker);
+    color: var(--light);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    padding: 0; /* Correction de la marge intrusive présente avant */
+}
+
+/* Forcer la police Monospace sur les éléments techniques */
+h1, h2, h3, h4, .terminal, .terminal-type, .tech-badge, font-mono {
+    font-family: 'Fira Code', monospace;
+}
+
+/* Configuration du scroll fluide */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Customisation de la barre de défilement (Scrollbar) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--dark);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+/* ========================================================= */
+/* HERO SECTION & INJECTION DU CANVAS DE MATRICE              */
+/* ========================================================= */
+.hero-section {
+    background-image: linear-gradient(rgba(5, 5, 5, 0.85), rgba(5, 5, 5, 0.95)), 
+                      url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+}
+
+#matrixCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Derrière le texte mais devant le background initial */
+    opacity: 0.25; /* Transparence pour ne pas étouffer le texte */
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 5;
+}
+
+/* ========================================================= */
+/* EFFETS VOLUCRÉS ET ANIMATIONS GLITCH / BUG                */
+/* ========================================================= */
+
+/* Effet Machine à Écrire */
+.terminal-type::after {
+    content: "|";
+    position: absolute;
+    right: -12px;
+    color: var(--primary);
+    animation: blink-cursor 1s infinite;
+}
+@keyframes blink-cursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Effet Cyber Glitch Text */
+.glitch {
+    position: relative;
+    display: inline-block;
+}
+.glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: transparent;
+}
+.glitch::before {
+    color: var(--primary);
+    z-index: -1;
+    transform: translate(-1px, 1px);
+    animation: glitch-anim 0.5s cubic-bezier(.25, .46, .45, .94) both infinite;
+}
+.glitch::after {
+    color: var(--accent);
+    z-index: -2;
+    transform: translate(1px, -1px);
+    animation: glitch-anim 0.5s cubic-bezier(.25, .46, .45, .94) reverse both infinite;
+}
+@keyframes glitch-anim {
+    0% { transform: translate(0) }
+    20% { transform: translate(-1px, 1px) }
+    40% { transform: translate(-1px, -1px) }
+    60% { transform: translate(1px, 1px) }
+    80% { transform: translate(1px, -1px) }
+    100% { transform: translate(0) }
+}
+
+/* Effet Bug Volontaire au survol des mots clés */
+.bug {
+    position: relative;
+    display: inline-block;
+    transition: color 0.2s;
+}
+.bug:hover {
+    animation: bug-shake 0.3s infinite;
+}
+@keyframes bug-shake {
+    0% { transform: translate(0) rotate(0deg); }
+    30% { transform: translate(-1px, -1px) rotate(-1deg); color: var(--primary); }
+    60% { transform: translate(1px, 1px) rotate(1deg); color: var(--accent); }
+    100% { transform: translate(0) rotate(0deg); }
+}
+
+/* ========================================================= */
+/* ÉLÉMENTS DE CARTES ET COMPOSANTS                          */
+/* ========================================================= */
+
+/* Badges Techniques */
+.tech-badge {
+    background-color: #1e293b;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    border: 1px solid #334155;
+    transition: border-color 0.3s;
+    cursor: default;
+    font-size: 0.875rem;
+}
+.tech-badge:hover {
+    border-color: var(--primary);
+}
+
+/* Cartes des Projets Cyber */
+.project-card {
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.project-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--primary);
+    box-shadow: 0 12px 30px rgba(0, 255, 157, 0.12);
+}
+.badge-tag {
+    background-color: #111827;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #374151;
+    color: #9ca3af;
+}
+
+/* Cartes Contact */
+.contact-card-info {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--dark);
+    border-radius: 0.5rem;
+    border: 1px solid #1f2937;
+    transition: border-color 0.3s;
+}
+.contact-card-info:hover {
+    border-color: var(--primary);
+}
+
+/* Liens des Réseaux Sociaux */
+.social-icon {
+    transition: all 0.3s ease;
+}
+.social-icon:hover {
+    transform: scale(1.15) rotate(4deg);
+}
+
+/* ========================================================= */
+/* ÉCRAN DE CHARGEMENT PRINCIPAL (LOADER)                    */
+/* ========================================================= */
+.loader {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--darker);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease-out;
+}
+.loader-bar {
+    width: 280px; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    background-size: 200% 100%;
+    animation: loader-slide 1.5s infinite linear;
+    margin-top: 15px; border-radius: 2px;
+}
+@keyframes loader-slide {
+    0% { background-position: -100% 0; }
+    100% { background-position: 100% 0; }
+}
+.terminal-prompt {
+    color: var(--primary);
+}
+
+/* ========================================================= */
+/* GESTION DE LA CHRONOLOGIE (TIMELINE) RESPONSIVE           */
+/* ========================================================= */
+.timeline {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.timeline::after {
+    content: ''; position: absolute;
+    width: 4px; background: var(--primary);
+    top: 0; bottom: 0; left: 50%; margin-left: -2px;
+}
+.timeline-item {
+    padding: 10px 40px; position: relative;
+    width: 50%; box-sizing: border-box;
+}
+.timeline-item::after {
+    content: ''; position: absolute;
+    width: 18px; height: 18px; background: var(--primary);
+    border: 4px solid var(--darker); border-radius: 50%;
+    top: 22px; z-index: 2;
+}
+.left { left: 0; }
+.right { left: 50%; }
+.left::after { right: -9px; }
+.right::after { left: -9px; }
+
+.timeline-content {
+    padding: 20px; background: var(--dark);
+    border-radius: 8px; border-left: 4px solid var(--primary);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4);
+}
+.right .timeline-content {
+    border-left: none; border-right: 4px solid var(--primary);
+}
+
+/* Initialisation cachée pour l'animation au scroll JS */
+.timeline-item {
+    opacity: 0;
+    transition: all 0.6s ease;
+}
+.timeline-item.left { transform: translateX(-40px); }
+.timeline-item.right { transform: translateX(40px); }
+
+/* Modification de la disposition pour les smartphones */
+@media screen and (max-width: 768px) {
+    .timeline::after { left: 31px; }
+    .timeline-item { width: 100%; padding-left: 70px; padding-right: 20px; }
+    .timeline-item.right { left: 0%; }
+    .left::after, .right::after { left: 22px; }
+    .right .timeline-content { border-left: 4px solid var(--primary); border-right: none; }
+    .timeline-item.left, .timeline-item.right { transform: translateY(30px); }
+}
+
+/* ========================================================= */
+/* DECLENCHEMENT DES SECTIONS (SCROLL ANIMATION)             */
+/* ========================================================= */
+.section-trigger {
+    opacity: 0;
+    transform: translateY(25px);
+    transition: all 0.7s cubic-bezier(0.215, 0.610, 0.355, 1);
+}
+.section-trigger.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ========================================================= */
+/* FENÊTRES MODALES (CONTACT CONFIRMATION)                   */
+/* ========================================================= */
+.modal {
+    display: none; position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 1000; justify-content: center; align-items: center;
+    backdrop-blur: 4px;
+}
+.modal-content {
+    background-color: var(--dark); padding: 35px; border-radius: 8px;
+    max-width: 450px; width: 90%; border: 1px solid var(--primary);
+    box-shadow: 0 0 25px rgba(0, 255, 157, 0.25);
+}
+
+/* ========================================================= */
+/* FIX DU MENU NAV SMARTPHONE                                */
+/* ========================================================= */
+.mobile-active {
+    display: flex !important;
+    flex-direction: column;
+    position: absolute;
+    top: 68px; right: 24px;
+    background-color: rgba(5,5,5,0.95);
+    border: 1px solid #1f2937;
+    padding: 1.5rem; border-radius: 0.5rem;
+    gap: 1.25rem; width: 200px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
