@@ -3,452 +3,1116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio Cybersécurité | Pierre-Bradley BILINGBI-MAX</title>
+    <title>Pierre-Bradley BILINGBI-MAX — Cybersécurité & Réseaux</title>
+    <meta name="description" content="Portfolio de Pierre-Bradley BILINGBI-MAX — étudiant en cybersécurité, réseaux et sécurité offensive. Toulouse, France.">
+
+    <!-- TYPOGRAPHIE : Archivo Black (titres) + Space Grotesk (corps) + JetBrains Mono (technique) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: {
+            colors: { acid: '#00FF6A', ink: '#E8E8E4', bgc: '#060708' },
+            fontFamily: { disp: ['"Archivo Black"','sans-serif'], grotesk: ['"Space Grotesk"','sans-serif'], mono: ['"JetBrains Mono"','monospace'] }
+        }}};
+    </script>
+
+    <!-- Swiper -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body id="top">
 
-    <div class="loader">
-        <div class="loader-content">
-            <div class="glitch text-4xl font-bold" data-text="SYSTEM_INIT">SYSTEM_INIT</div>
-            <div class="text-sm mt-2 text-gray-400 font-mono">Chargement du portfolio...</div>
-            <div class="loader-bar"></div>
-            <div class="terminal mt-4 text-sm text-left">
-                <div class="flex"><span class="terminal-prompt">root@cybersec:~#</span> <span class="ml-2">Vérification des vulnérabilités... OK</span></div>
-                <div class="flex"><span class="terminal-prompt">root@cybersec:~#</span> <span class="ml-2">Interface graphique chargée.</span></div>
-            </div>
+    <a class="skip-link mono" href="#about">ALLER AU CONTENU</a>
+
+    <!-- Grain argentique global + fond réseau animé -->
+    <div class="grain" aria-hidden="true"></div>
+    <canvas id="bgNet" aria-hidden="true"></canvas>
+
+    <!-- ═══════════ LOADER / SÉQUENCE DE DÉMARRAGE ═══════════ -->
+    <div class="loader" id="loader">
+        <div class="loader-inner">
+            <div class="loader-logo mono">SYSTEM<span>·</span>INIT ...</div>
+            <div class="loader-count font-disp" id="loaderCount">000</div>
+            <div class="loader-bar"><i id="loaderFill"></i></div>
+            <div class="loader-log mono" id="loaderLog"></div>
         </div>
     </div>
 
-    <nav class="nav-container fixed top-0 left-0 right-0 bg-black bg-opacity-90 z-50 border-b border-gray-800 backdrop-blur-sm">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#top" class="text-2xl font-bold tracking-wider">
-                <span class="text-emerald-400">Cyber</span><span class="glitch" data-text="Securite">Securite</span>
-            </a>
-            <div id="navMenu" class="hidden md:flex space-x-8 text-sm uppercase tracking-wider font-bold">
-                <a href="#about" class="hover:text-emerald-400 transition">À propos</a>
-                <a href="#skills" class="hover:text-emerald-400 transition">Compétences</a>
-                <a href="#parcours" class="hover:text-emerald-400 transition">Parcours</a>
-                <a href="#projects" class="hover:text-emerald-400 transition">Projets</a>
-                <a href="#contact" class="hover:text-emerald-400 transition">Contact</a>
-            </div>
-            <button class="md:hidden focus:outline-none text-emerald-400 mobile-menu-btn">
-                <i class="fas fa-bars text-2xl"></i>
-            </button>
-        </div>
-    </nav>
-
-    <section class="hero-section min-h-screen flex items-center justify-center relative overflow-hidden">
-        <canvas id="matrixCanvas"></canvas>
-        <div class="hero-content container mx-auto px-6 text-center z-10 pt-20">
-            <h1 class="text-4xl md:text-7xl font-bold mb-4 text-white">
-                Étudiant en <span class="terminal-type text-emerald-400" id="cyberText"></span>
-            </h1>
-            <p class="text-lg md:text-2xl mb-8 max-w-2xl mx-auto bg-black bg-opacity-70 border border-gray-800 px-6 py-4 rounded-lg backdrop-blur-sm">
-                Spécialiste en <span class="bug text-emerald-400">sécurité offensive</span>, <span class="bug text-cyan-400">analyse de vulnérabilités</span> et <span class="bug text-pink-500">protection des infrastructures</span>.
-            </p>
-            <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-6">
-                <a href="#projects" class="bg-emerald-400 hover:bg-emerald-500 text-black font-bold py-3 px-8 rounded transition shadow-[0_0_15px_rgba(0,255,157,0.4)] w-full md:w-auto text-center uppercase tracking-wide">Explorer mes projets</a>
-                <a href="#contact" class="border-2 border-emerald-400 hover:bg-emerald-400 hover:text-black text-emerald-400 font-bold py-3 px-8 rounded transition w-full md:w-auto text-center uppercase tracking-wide">Contact immédiat</a>
+    <!-- ═══════════ NAVIGATION ═══════════ -->
+    <header class="nav" id="nav">
+        <div class="nav-progress" aria-hidden="true"><i id="scrollProgress"></i></div>
+        <div class="nav-inner">
+            <a href="#top" class="brand mono">PORT<span class="brand-x">·</span>FOLIO<span class="brand-dot"></span></a>
+            <nav class="nav-links mono" aria-label="Navigation principale">
+                <a href="#about"><sup>01</sup>PROFIL</a>
+                <a href="#skills"><sup>02</sup>COMPÉTENCES</a>
+                <a href="#parcours"><sup>03</sup>PARCOURS</a>
+                <a href="#projects"><sup>04</sup>PROJETS</a>
+                <a href="#contact"><sup>05</sup>CONTACT</a>
+            </nav>
+            <div class="nav-right">
+                <div class="status mono" aria-hidden="true"><i></i>SITE SÉCURISÉ</div>
+                <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+                    <span></span><span></span>
+                </button>
             </div>
         </div>
-        <div class="absolute bottom-10 left-0 right-0 flex justify-center z-10">
-            <a href="#about" class="animate-bounce">
-                <i class="fas fa-chevron-down text-3xl text-emerald-400"></i>
-            </a>
-        </div>
-    </section>
+    </header>
 
-    <section id="about" class="py-20 bg-dark section-trigger">
-        <div class="container mx-auto px-6">
-            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">
-                <span class="text-emerald-400">À propos de</span> <span class="glitch" data-text="moi">moi</span>
-            </h2>
-            <div class="flex flex-col md:flex-row items-center gap-12">
-                <div class="md:w-1/3 flex justify-center">
-                    <div class="relative group">
-                        <div class="w-64 h-64 rounded-full border-4 border-emerald-400 overflow-hidden shadow-[0_0_30px_rgba(0,255,157,0.3)] transition duration-500 group-hover:scale-105">
-                            <img src="images/profile2.jpg" alt="Pierre-Bradley" class="w-full h-full object-cover group-hover:grayscale transition duration-500">
-                        </div>
-                        <div class="absolute -bottom-3 -right-3 bg-emerald-400 text-black px-4 py-2 rounded-full font-bold shadow-lg text-sm">
-                            <i class="fas fa-user-graduate mr-1"></i> ÉTUDIANT
-                        </div>
-                    </div>
-                </div>
-                <div class="md:w-2/3">
-                    <h3 class="text-2xl font-bold mb-4 text-white">Je suis <span class="text-emerald-400">Pierre-Bradley BILINGBI-MAX</span></h3>
-                    <p class="text-gray-300 mb-6 leading-relaxed">
-                        Étudiant en deuxième année de BTS CIEL au lycée International Victor Hugo, je me spécialise dans la sécurité des systèmes d'information et la cybersécurité. Passionné par les défis techniques, le reverse engineering et la défense réseau, j'aime développer des scripts intelligents pour automatiser l'audit de sécurité.
-                    </p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 bg-gray-900 p-6 rounded-lg border border-gray-800">
-                        <div>
-                            <p class="mb-2"><i class="fas fa-calendar-alt text-emerald-400 w-6"></i> <span class="text-gray-400">Âge :</span> 21 ans</p>
-                            <p><i class="fas fa-envelope text-emerald-400 w-6"></i> <span class="text-gray-400">Email :</span> <a href="mailto:pbilingbimax@gmail.com" class="hover:text-emerald-400 transition">pbilingbimax@gmail.com</a></p>
-                        </div>
-                        <div>
-                            <p class="mb-2"><i class="fas fa-map-marker-alt text-emerald-400 w-6"></i> <span class="text-gray-400">Ville :</span> Toulouse, France</p>
-                            <p><i class="fas fa-briefcase text-emerald-400 w-6"></i> <span class="text-gray-400">Recherche :</span> Stage / Alternance</p>
-                        </div>
-                    </div>
-                    <div class="flex space-x-4">
-                        <a href="https://github.com/Pierre-Bradley" class="social-icon bg-gray-800 w-10 h-10 rounded flex items-center justify-center text-xl text-white hover:bg-emerald-400 hover:text-black" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                        <a href="#" class="social-icon bg-gray-800 w-10 h-10 rounded flex items-center justify-center text-xl text-white hover:bg-emerald-400 hover:text-black" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="docs/CV_Pierre-Bradley_Dev.pdf" class="social-icon bg-gray-800 w-10 h-10 rounded flex items-center justify-center text-xl text-white hover:bg-emerald-400 hover:text-black" aria-label="CV"><i class="fas fa-file-pdf"></i></a>
-                    </div>
+    <!-- Menu mobile plein écran -->
+    <div class="mobile-menu" id="mobileMenu">
+        <nav class="mm-nav" aria-label="Menu mobile">
+            <a class="mm-link font-disp" href="#about"><em class="mono">01</em>PROFIL</a>
+            <a class="mm-link font-disp" href="#skills"><em class="mono">02</em>COMPÉTENCES</a>
+            <a class="mm-link font-disp" href="#parcours"><em class="mono">03</em>PARCOURS</a>
+            <a class="mm-link font-disp" href="#projects"><em class="mono">04</em>PROJETS</a>
+            <a class="mm-link font-disp" href="#contact"><em class="mono">05</em>CONTACT</a>
+        </nav>
+        <p class="mm-foot mono">Pierre-Bradley — TOULOUSE, FRANCE</p>
+    </div>
+
+    <main>
+
+        <!-- ═══════════ HERO / REEL CINÉMATOGRAPHIQUE ═══════════ -->
+        <section class="hero" id="hero">
+            <div class="reel" id="reel" aria-hidden="true"></div>
+            <div class="hero-shade" aria-hidden="true"></div>
+            <div class="hero-vignette" aria-hidden="true"></div>
+
+            <!-- HUD du système visuel -->
+            <div class="hud hud-tl mono" aria-hidden="true">PIERRE-BRADLEY·BILINGBI-MAX — PORTFOLIO 2026</div>
+            <div class="hud hud-tr mono" aria-hidden="true">HEURE LOCALE <span id="hudClock">--:--:--</span></div>
+            <div class="hud hud-bl mono" aria-hidden="true">43.6047° N — 1.4442° E — TOULOUSE, FRANCE</div>
+
+            <div class="hero-content">
+                <p class="hero-kicker mono intro-item"><span class="k-blink">▮</span> PORTFOLIO — CYBERSÉCURITÉ & RÉSEAUX</p>
+                <h1 class="hero-title font-disp">
+                    <span class="line"><span class="line-inner">PIERRE-BRADLEY</span></span>
+                    <span class="line"><span class="line-inner outline">BILINGBI-MAX</span></span>
+                </h1>
+                <p class="hero-sub mono intro-item">Technicien <span class="rotator" id="rotator">Systeme et Reseau</span><span class="caret" aria-hidden="true"></span></p>
+                <p class="hero-desc mono intro-item">SÉCURITÉ OFFENSIVE · ANALYSE DE VULNÉRABILITÉS · PROTECTION DES INFRASTRUCTURES</p>
+                <div class="hero-cta intro-item">
+                    <a href="#projects" class="btn btn-solid magnetic">VOIR MES PROJETS <i class="fa-solid fa-arrow-right"></i></a>
+                    <a href="#contact" class="btn btn-ghost magnetic">ME CONTACTER</a>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <section id="skills" class="py-20 bg-darker section-trigger">
-        <div class="container mx-auto px-6">
-            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">
-                <span class="text-emerald-400">Mes</span> <span class="glitch" data-text="Compétences">Compétences</span>
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div>
-                    <h3 class="text-xl font-bold mb-6 text-emerald-400 border-b border-gray-800 pb-2"><i class="fas fa-cogs mr-2"></i> Domaines d'Expertise</h3>
-                    <div class="space-y-6">
-                        <div>
-                            <div class="flex justify-between mb-1 text-sm font-bold"><span>Sécurité des réseaux</span><span class="text-emerald-400">85%</span></div>
-                            <div class="w-full bg-gray-800 rounded-full h-2"><div class="bg-emerald-400 h-2 rounded-full" style="width: 85%"></div></div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-1 text-sm font-bold"><span>Cryptographie & Chiffrement</span><span class="text-emerald-400">75%</span></div>
-                            <div class="w-full bg-gray-800 rounded-full h-2"><div class="bg-emerald-400 h-2 rounded-full" style="width: 75%"></div></div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-1 text-sm font-bold"><span>Pentesting & Audit</span><span class="text-emerald-400">80%</span></div>
-                            <div class="w-full bg-gray-800 rounded-full h-2"><div class="bg-emerald-400 h-2 rounded-full" style="width: 80%"></div></div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold mb-6 text-emerald-400 border-b border-gray-800 pb-2"><i class="fas fa-microchip mr-2"></i> Outils & Écosystème</h3>
-                    <div class="flex flex-wrap gap-3">
-                        <div class="tech-badge"><i class="fab fa-linux text-emerald-400 mr-2"></i>Linux / Bash</div>
-                        <div class="tech-badge"><i class="fas fa-dragon text-emerald-400 mr-2"></i>Kali Linux</div>
-                        <div class="tech-badge"><i class="fab fa-python text-emerald-400 mr-2"></i>Python</div>
-                        <div class="tech-badge"><i class="fas fa-database text-emerald-400 mr-2"></i>SQL</div>
-                        <div class="tech-badge"><i class="fab fa-docker text-emerald-400 mr-2"></i>Docker</div>
-                        <div class="tech-badge"><i class="fas fa-network-wired text-emerald-400 mr-2"></i>Wireshark</div>
-                        <div class="tech-badge"><i class="fas fa-lock text-emerald-400 mr-2"></i>Metasploit</div>
-                    </div>
-                </div>
+            <!-- HUD du reel : timecode, progression, son -->
+            <div class="reel-hud" aria-hidden="false">
+                <div class="reel-caption mono">SÉQUENCE <span id="frameIdx">01</span>/05 — <span id="frameLabel">JOURNAL DES CONNEXIONS</span></div>
+                <div class="reel-progress"><i id="reelBar"></i></div>
+                <div class="reel-dots" id="reelDots"></div>
+                <button class="sound" id="soundBtn" aria-pressed="false" aria-label="Activer le son d'ambiance">
+                    <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+                    <span class="sound-label mono">SON <span id="soundLabel">OFF</span></span>
+                </button>
+            </div>
+
+            <div class="scroll-cue mono" aria-hidden="true">DÉFILER<span></span></div>
+        </section>
+
+        <!-- ═══════════ TICKER ═══════════ -->
+        <div class="ticker" aria-hidden="true">
+            <div class="ticker-track font-disp">
+                <span>SÉCURITÉ OFFENSIVE</span><i>·</i><span>ANALYSE DE VULNÉRABILITÉS</span><i>·</i><span>CRYPTOGRAPHIE</span><i>·</i><span>DÉFENSE RÉSEAU</span><i>·</i><span>FORENSIQUE NUMÉRIQUE</span><i>·</i><span>AUDIT DE SÉCURITÉ</span><i>·</i><span>AUTOMATISATION</span><i>·</i><span>LINUX</span><i>·</i><span>PYTHON</span><i>·</i><span>PENTESTING</span><i>·</i><span>WIRESHARK</span><i>·</i><span>DOCKER</span><i>·</i>
             </div>
         </div>
-    </section>
 
-    <section id="parcours" class="py-20 bg-dark section-trigger">
-        <div class="container mx-auto px-6">
-            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">
-                <span class="text-emerald-400">Mon</span> <span class="glitch" data-text="Parcours">Parcours</span>
-            </h2>
-            <div class="timeline">
-                <div class="timeline-item left">
-                    <div class="timeline-content">
-                        <h3 class="text-xl font-bold mb-1 text-emerald-400">Lycée Général</h3>
-                        <p class="text-gray-300 font-bold">Lycée Bellevue</p>
-                        <p class="text-gray-500 text-sm mb-2"><i class="far fa-calendar-alt mr-1"></i> 2020 - 2023</p>
-                        <p class="text-gray-400 text-sm">Spécialité Mathématiques, NSI (Numérique et Sciences Informatiques) et Physique.</p>
+        <!-- ═══════════ 01 — PROFIL ═══════════ -->
+        <section id="about" class="section">
+            <span class="deco-sq" style="top:8%;right:4%" aria-hidden="true"></span>
+            <div class="wrap">
+                <div class="sec-head">
+                    <div>
+                        <p class="kicker mono">[ 01 — PROFIL ]</p>
+                        <h2 class="sec-title font-disp">À PROPOS<span class="glitch outline" data-text="DE MOI">DE MOI</span></h2>
                     </div>
+                    <span class="sec-idx font-disp" aria-hidden="true">01</span>
                 </div>
-                <div class="timeline-item right">
-                    <div class="timeline-content">
-                        <h3 class="text-xl font-bold mb-1 text-emerald-400">Licence Informatique</h3>
-                        <p class="text-gray-300 font-bold">Université Paul Sabatier</p>
-                        <p class="text-gray-500 text-sm mb-2"><i class="far fa-calendar-alt mr-1"></i> 2023 - 2024</p>
-                        <p class="text-gray-400 text-sm">Bases algorithmiques, architectures des réseaux et administration système.</p>
+
+                <div class="about-grid">
+                    <div class="about-left sr-item">
+                        <div class="portrait" id="portrait">
+                            <span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
+                            <img src="images/profile2.jpg" alt="Portrait de Pierre-Bradley BILINGBI-MAX">
+                            <span class="p-grid" aria-hidden="true"></span>
+                            <span class="scan-beam" aria-hidden="true"></span>
+                            <span class="scan-tag mono" aria-hidden="true">ANALYSE EN COURS…</span>
+                            <span class="portrait-tag mono">STATUT : RECHERCHE D'EMPLOI</span>
+                        </div>
                     </div>
-                </div>
-                <div class="timeline-item left">
-                    <div class="timeline-content">
-                        <h3 class="text-xl font-bold mb-1 text-emerald-400">BTS CIEL (Option A)</h3>
-                        <p class="text-gray-300 font-bold">Lycée International Victor Hugo</p>
-                        <p class="text-gray-500 text-sm mb-2"><i class="far fa-calendar-alt mr-1"></i> 2024 - Présent</p>
-                        <p class="text-gray-400 text-sm">Cybersécurité, informatique embarquée et réseaux sécurisés.</p>
-                    </div>
-                </div>
-                <div class="timeline-item right">
-                    <div class="timeline-content">
-                        <h3 class="text-xl font-bold mb-1 text-emerald-400">Stage Informatique</h3>
-                        <p class="text-gray-300 font-bold">INRAE TOXALIM Toulouse</p>
-                        <p class="text-gray-500 text-sm mb-2"><i class="far fa-calendar-alt mr-1"></i> Été 2026</p>
-                        <p class="text-gray-400 text-sm">Gestion du parc, virtualisation et durcissement des postes clients.</p>
+                    <div class="about-right">
+                        <p class="about-lede">Je casse pour comprendre. <span class="txt-acid">Je blinde pour durer.</span></p>
+                        <p class="about-txt">Technicien en système et réseau avec un BAC+2, je me spécialise dans la sécurité des systèmes d'information et la cybersécurité. Passionné par les défis techniques, le reverse engineering, la programmation et la défense réseau, j'aime développer des scripts intelligents pour automatiser l'audit de sécurité.</p>
+
+                        <div class="dossier mono sr-item">
+                            <div class="dossier-row"><span>IDENTITÉ</span><b>Pierre-Bradley BILINGBI-MAX</b></div>
+                            <div class="dossier-row"><span>ÂGE</span><b>22 ans</b></div>
+                            <div class="dossier-row"><span>VILLE</span><b>Toulouse, France</b></div>
+                            <div class="dossier-row"><span>DERNIER DIPLÔME</span><b>BTS CIEL (OPTION A) — Lycée International Victor Hugo</b></div>
+                            <div class="dossier-row"><span>RECHERCHE</span><b class="txt-acid">CDD, CDI ou Intérim — 2026</b></div>
+                        </div>
+
+                        <div class="stats">
+                            <div class="stat"><span class="stat-num font-disp" data-target="2" data-pad="2">02</span><span class="stat-lbl mono">ANS DE SPÉCIALISATION CYBER</span></div>
+                            <div class="stat"><span class="stat-num font-disp" data-target="6">6</span><span class="stat-lbl mono">PROJETS DOCUMENTÉS</span></div>
+                            <div class="stat"><span class="stat-num font-disp" data-target="10" data-suffix="+">10</span><span class="stat-lbl mono">OUTILS MAÎTRISÉS</span></div>
+                            <!-- <div class="stat"><span class="stat-num font-disp" data-target="300" data-suffix="H">0</span><span class="stat-lbl mono">DE PRATIQUE EN LABORATOIRE</span></div> -->
+                        </div>
+
+                        <div class="socials mono sr-item">
+                            <a href="https://github.com/Pierre-Bradley" target="_blank" rel="noopener"><i class="fab fa-github"></i> GITHUB <span>↗</span></a>
+                            <a href="https://www.linkedin.com/in/pierre-bradley-bilingbi-max/" target="_blank" rel="noopener"><i class="fab fa-linkedin-in"></i> LINKEDIN <span>↗</span></a>
+                            <a href="docs/CV Technicien Systèmes et Réseaux Junior - Pierre-Bradley BILINGBI-MAX .pdf" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i> CV — VERSION PDF <span>↗</span></a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="projects" class="py-20 bg-darker section-trigger">
-        <div class="container mx-auto px-6">
-            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">
-                <span class="text-emerald-400">Mes</span> <span class="glitch" data-text="Projets">Projets</span>
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                
-                <div class="project-card bg-gray-900 rounded-lg overflow-hidden group">
-                    <div class="relative overflow-hidden h-48 bg-gray-950 flex items-center justify-center border-b border-gray-800">
-                        <i class="fas fa-robot text-5xl text-emerald-400 opacity-60 group-hover:scale-110 transition duration-300"></i>
-                        <div class="absolute top-3 right-3 bg-emerald-400 text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg">IA & Sec</div>
+        <!-- ═══════════ 02 — COMPÉTENCES ═══════════ -->
+        <section id="skills" class="section section-panel">
+            <div class="wrap">
+                <div class="sec-head">
+                    <div>
+                        <p class="kicker mono">[ 02 — COMPÉTENCES ]</p>
+                        <h2 class="sec-title font-disp">MES<span class="glitch outline" data-text="COMPÉTENCES">COMPÉTENCES</span></h2>
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2 text-white">Analyseur Automatisé de Logs</h3>
-                        <p class="text-gray-400 mb-6 text-sm">Script intelligent développé en collaboration avec l'IA permettant de parser des logs d'authentification (SSH/Apache) et de bloquer automatiquement les IP d'attaquants via iptables.</p>
-                        <div class="flex space-x-2 border-t border-gray-800 pt-4"><span class="badge-tag">Python</span><span class="badge-tag">Regex</span><span class="badge-tag">Syslog</span></div>
-                    </div>
+                    <span class="sec-idx font-disp" aria-hidden="true">02</span>
                 </div>
 
-                <div class="project-card bg-gray-900 rounded-lg overflow-hidden group">
-                    <div class="relative overflow-hidden h-48 bg-gray-950 flex items-center justify-center border-b border-gray-800">
-                        <i class="fas fa-envelope-shield text-5xl text-cyan-400 opacity-60 group-hover:scale-110 transition duration-300"></i>
-                        <div class="absolute top-3 right-3 bg-cyan-400 text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg">Machine Learning</div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2 text-white">Détecteur Anti-Phishing IA</h3>
-                        <p class="text-gray-400 mb-6 text-sm">Conception d'un micro-modèle prédictif entraîné à analyser la sémantique et la structure des courriels afin d'identifier des campagnes d'hameçonnage ciblées.</p>
-                        <div class="flex space-x-2 border-t border-gray-800 pt-4"><span class="badge-tag">Python</span><span class="badge-tag">Scikit-Learn</span><span class="badge-tag">NLP</span></div>
-                    </div>
-                </div>
+                <div class="skills-grid">
+                    <div class="skills-main">
+                        <p class="skill-col-label mono">MAÎTRISE PAR GRAND DOMAINE</p>
+                        <div class="donuts">
+                            <div class="donut" data-val="85" data-name="Sécurité des réseaux"></div>
+                            <div class="donut" data-val="80" data-name="Pentesting & audit"></div>
+                            <div class="donut" data-val="75" data-name="Cryptographie"></div>
+                            <div class="donut" data-val="90" data-name="Linux & scripts"></div>
+                        </div>
 
-                <div class="project-card bg-gray-900 rounded-lg overflow-hidden group">
-                    <div class="relative overflow-hidden h-48 bg-gray-950 flex items-center justify-center border-b border-gray-800">
-                        <i class="fas fa-network-wired text-5xl text-pink-500 opacity-60 group-hover:scale-110 transition duration-300"></i>
-                        <div class="absolute top-3 right-3 bg-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">Réseau / Audit</div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2 text-white">Scanner de Failles Réseau</h3>
-                        <p class="text-gray-400 mb-6 text-sm">Cartographie complète d'une infrastructure locale avec détection dynamique de bannières obsolètes et corrélation automatique avec la base des vulnérabilités CVE actives.</p>
-                        <div class="flex space-x-2 border-t border-gray-800 pt-4"><span class="badge-tag">Nmap API</span><span class="badge-tag">Bash</span><span class="badge-tag">JSON</span></div>
-                    </div>
-                </div>
-
-                <div class="project-card bg-gray-900 rounded-lg overflow-hidden group">
-                    <div class="relative overflow-hidden h-48 bg-gray-950 flex items-center justify-center border-b border-gray-800">
-                        <i class="fas fa-key text-5xl text-yellow-500 opacity-60 group-hover:scale-110 transition duration-300"></i>
-                        <div class="absolute top-3 right-3 bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg">Crypto</div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2 text-white">Crypto-Coffre AES-256</h3>
-                        <p class="text-gray-400 mb-6 text-sm">Gestionnaire de mots de passe local en ligne de commande (CLI). Les secrets sont sécurisés à l'aide d'une dérivation de clé via PBKDF2 et d'un chiffrement AES symétrique.</p>
-                        <div class="flex space-x-2 border-t border-gray-800 pt-4"><span class="badge-tag">Python</span><span class="badge-tag">Cryptography</span></div>
-                    </div>
-                </div>
-
-                <div class="project-card bg-gray-900 rounded-lg overflow-hidden group">
-                    <div class="relative overflow-hidden h-48 bg-gray-950 flex items-center justify-center border-b border-gray-800">
-                        <i class="fas fa-spider text-5xl text-purple-500 opacity-60 group-hover:scale-110 transition duration-300"></i>
-                        <div class="absolute top-3 right-3 bg-purple-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">Defensive Sec</div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2 text-white">Honeypot SSH (Pot de Miel)</h3>
-                        <p class="text-gray-400 mb-6 text-sm">Mise en boîte d'une fausse invite de commande SSH via un conteneur Docker afin de piéger les bots internet malveillants et d'étudier leurs payloads en temps réel.</p>
-                        <div class="flex space-x-2 border-t border-gray-800 pt-4"><span class="badge-tag">Docker</span><span class="badge-tag">Cowrie</span><span class="badge-tag">Linux</span></div>
-                    </div>
-                </div>
-
-                <div class="project-card bg-gray-900 rounded-lg overflow-hidden group">
-                    <div class="relative overflow-hidden h-48 bg-gray-950 flex items-center justify-center border-b border-gray-800">
-                        <i class="fas fa-file-waveform text-5xl text-blue-400 opacity-60 group-hover:scale-110 transition duration-300"></i>
-                        <div class="absolute top-3 right-3 bg-blue-400 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">Forensique</div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2 text-white">Analyseur PCAP Avancé</h3>
-                        <p class="text-gray-400 mb-6 text-sm">Outil d'automatisation d'extraction d'artéfacts réseau sur des fichiers de capture de paquets volumineux pour repérer des exfiltrations anormales de données ou des requêtes DNS suspectes.</p>
-                        <div class="flex space-x-2 border-t border-gray-800 pt-4"><span class="badge-tag">Wireshark</span><span class="badge-tag">Tshark</span><span class="badge-tag">Bash</span></div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="py-20 bg-dark section-trigger">
-        <div class="container mx-auto px-6">
-            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">
-                <span class="text-emerald-400">Contactez</span> <span class="glitch" data-text="moi">moi</span>
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-                <div>
-                    <h3 class="text-xl font-bold mb-6 text-emerald-400"><i class="fas fa-satellite-dish mr-2"></i> Canaux de communication</h3>
-                    <div class="space-y-6">
-                        <div class="contact-card-info">
-                            <div class="text-emerald-400 text-2xl mr-4"><i class="fas fa-envelope"></i></div>
-                            <div>
-                                <h4 class="font-bold text-white">Email</h4>
-                                <a href="mailto:pbilingbimax@gmail.com" class="text-gray-400 hover:text-emerald-400">pbilingbimax@gmail.com</a>
+                        <p class="skill-col-label mono">SAVOIR-FAIRES DÉTAILLÉS</p>
+                        <div class="meters">
+                            <div class="meter" data-level="80">
+                                <div class="meter-head mono"><span><i class="fa-solid fa-magnifying-glass-chart txt-acid"></i> ANALYSE DE VULNÉRABILITÉS</span><b class="meter-val">10%</b></div>
+                                <div class="segments" aria-hidden="true"></div>
                             </div>
-                        </div>
-                        <div class="contact-card-info">
-                            <div class="text-emerald-400 text-2xl mr-4"><i class="fas fa-phone"></i></div>
-                            <div>
-                                <h4 class="font-bold text-white">Téléphone</h4>
-                                <a href="tel:+33767271747" class="text-gray-400 hover:text-emerald-400">+33 7 67 27 17 47</a>
+                            <div class="meter" data-level="85">
+                                <div class="meter-head mono"><span><i class="fa-solid fa-terminal txt-acid"></i> SCRIPTS D'AUTOMATISATION — PYTHON</span><b class="meter-val">20%</b></div>
+                                <div class="segments" aria-hidden="true"></div>
+                            </div>
+                            <div class="meter" data-level="70">
+                                <div class="meter-head mono"><span><i class="fa-solid fa-wave-square txt-acid"></i> FORENSIQUE & ANALYSE DU TRAFIC</span><b class="meter-val">30%</b></div>
+                                <div class="segments" aria-hidden="true"></div>
+                            </div>
+                            <div class="meter" data-level="75">
+                                <div class="meter-head mono"><span><i class="fa-brands fa-docker txt-acid"></i> VIRTUALISATION & CONTENEURS</span><b class="meter-val">40%</b></div>
+                                <div class="segments" aria-hidden="true"></div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold mb-6 text-emerald-400"><i class="fas fa-terminal mr-2"></i> Envoyer un ping à Pierre-Bradley</h3>
-                    <form id="contactForm" action="https://formsubmit.co/pbilingbimax@gmail.com" method="POST" class="space-y-4 bg-gray-900 p-6 rounded-lg border border-gray-800">
-                        <input type="hidden" name="_captcha" value="false">
-                        <input type="hidden" name="_next" value="https://Pierre-Bradley.github.io/portfolio/">
-                        <div>
-                            <label class="block mb-2 text-sm font-bold text-gray-300">Nom complet</label>
-                            <input type="text" name="name" required class="w-full bg-gray-800 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-emerald-400 transition text-white font-mono text-sm">
-                        </div>
-                        <div>
-                            <label class="block mb-2 text-sm font-bold text-gray-300">Email</label>
-                            <input type="email" name="email" required class="w-full bg-gray-800 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-emerald-400 transition text-white font-mono text-sm">
-                        </div>
-                        <div>
-                            <label class="block mb-2 text-sm font-bold text-gray-300">Message</label>
-                            <textarea rows="4" name="message" required class="w-full bg-gray-800 border border-gray-700 rounded px-4 py-3 focus:outline-none focus:border-emerald-400 transition text-white font-mono text-sm"></textarea>
-                        </div>
-                        <button type="submit" class="bg-emerald-400 hover:bg-emerald-500 text-black font-bold py-3 px-6 rounded transition w-full shadow-[0_0_15px_rgba(0,255,157,0.3)] uppercase tracking-wider text-sm">
-                            <i class="fas fa-paper-plane mr-2"></i> Transmettre
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <footer class="bg-black py-8 border-t border-gray-800">
-        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
-            <div class="text-gray-500 text-sm font-mono">
-                © 2026 Pierre-Bradley BILINGBI-MAX. Secure Portfolio.
+                    <div class="skills-side">
+                        <div class="webchart sr-item">
+                            <svg id="skillWeb" viewBox="0 0 260 220" role="img" aria-label="Graphique en étoile résumant le profil de compétences"></svg>
+                            <p class="web-legend mono">PROFIL DE COMPÉTENCES — VUE D'ENSEMBLE</p>
+                        </div>
+                        <div class="chips mono sr-item">
+                            <span class="chip"><i class="fab fa-linux txt-acid"></i>Linux / Bash</span>
+                            <span class="chip"><i class="fas fa-dragon txt-acid"></i>Kali Linux</span>
+                            <span class="chip"><i class="fab fa-python txt-acid"></i>Python</span>
+                            <span class="chip"><i class="fas fa-crosshairs txt-acid"></i>Nmap</span>
+                            <span class="chip"><i class="fas fa-database txt-acid"></i>SQL</span>
+                            <span class="chip"><i class="fab fa-docker txt-acid"></i>Docker</span>
+                            <span class="chip"><i class="fas fa-wave-square txt-acid"></i>Wireshark</span>
+                            <span class="chip"><i class="fas fa-lock txt-acid"></i>Metasploit</span>
+                            <span class="chip"><i class="fas fa-code-branch txt-acid"></i>Git</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <a href="#top" class="text-gray-400 hover:text-emerald-400 transition flex items-center bg-gray-900 px-4 py-2 rounded font-mono text-sm mt-4 md:mt-0">
-                <i class="fas fa-arrow-up mr-2"></i> TOP_OF_PAGE
-            </a>
+        </section>
+
+        <!-- ═══════════ 03 — PARCOURS ═══════════ -->
+        <section id="parcours" class="section">
+            <span class="deco-cross" style="top:12%;left:6%" aria-hidden="true"></span>
+            <span class="deco-cross" style="bottom:14%;right:7%;animation-delay:2s" aria-hidden="true"></span>
+            <div class="wrap">
+                <div class="sec-head">
+                    <div>
+                        <p class="kicker mono">[ 03 — PARCOURS ]</p>
+                        <h2 class="sec-title font-disp">MON<span class="glitch outline" data-text="PARCOURS">PARCOURS</span></h2>
+                    </div>
+                    <span class="sec-idx font-disp" aria-hidden="true">03</span>
+                </div>
+
+                <div class="tl">
+                    <div class="tl-item">
+                        <p class="tl-date mono">ÉTÉ 2026</p>
+                        <h3 class="tl-title font-disp">STAGE INFORMATIQUE</h3>
+                        <p class="tl-place mono">INRAE TOXALIM — Toulouse</p>
+                        <p class="tl-desc">Gestion du parc, virtualisation et durcissement des postes clients.</p>
+                    </div>
+                    <div class="tl-item">
+                        <p class="tl-date mono">2024 — 2026</p>
+                        <h3 class="tl-title font-disp">BTS CIEL (OPTION A)</h3>
+                        <p class="tl-place mono">Lycée International Victor Hugo</p>
+                        <p class="tl-desc">Cybersécurité, informatique embarquée et réseaux sécurisés.</p>
+                    </div>
+                    <div class="tl-item">
+                        <p class="tl-date mono">2023 — 2024</p>
+                        <h3 class="tl-title font-disp">LICENCE INFORMATIQUE</h3>
+                        <p class="tl-place mono">Université Paul Sabatier</p>
+                        <p class="tl-desc">Bases algorithmiques, architectures des réseaux et administration système.</p>
+                    </div>
+                    <div class="tl-item">
+                        <p class="tl-date mono">2020 — 2023</p>
+                        <h3 class="tl-title font-disp">LYCÉE GÉNÉRAL</h3>
+                        <p class="tl-place mono">Lycée Bellevue</p>
+                        <p class="tl-desc">Spécialité Mathématiques, NSI (Numérique et Sciences Informatiques) et Physique.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ 04 — PROJETS ═══════════ -->
+        <section id="projects" class="section section-panel">
+            <span class="deco-sq" style="top:5%;left:3%" aria-hidden="true"></span>
+            <div class="wrap">
+                <div class="sec-head">
+                    <div>
+                        <p class="kicker mono">[ 04 — PROJETS ]</p>
+                        <h2 class="sec-title font-disp">MES<span class="glitch outline" data-text="PROJETS">PROJETS</span></h2>
+                    </div>
+                    <span class="sec-idx font-disp" aria-hidden="true">04</span>
+                </div>
+
+                <div class="projects-grid">
+
+                    <article class="project">
+                        <div class="project-media">
+                            <span class="p-pattern" aria-hidden="true"></span>
+                            <i class="p-icon fa-solid fa-robot"></i>
+                            <span class="stamp mono">OPÉRATIONNEL</span>
+                            <span class="p-idx font-disp" aria-hidden="true">01</span>
+                        </div>
+                        <div href="" target="_blank" class="project-body">
+                            <h3 class="p-title">Analyseur Automatisé de Logs</h3>
+                            <p class="p-desc">Script intelligent développé en collaboration avec l'IA permettant de lire les journaux de connexion (SSH/Apache) et de bloquer automatiquement les adresses des attaquants via le pare-feu.</p>
+                            <div class="tags mono"><span>Python</span><span>Regex</span><span>Syslog</span></div>
+                            <a href="https://github.com/Pierre-Bradley/Log-analyser" target="_blank" rel="noopener"><span class="p-arrow" aria-hidden="true">↗</span></a>
+                        </div>
+                    </article>
+
+                    <article class="project">
+                        <div class="project-media">
+                            <span class="p-pattern" aria-hidden="true"></span>
+                            <i class="p-icon fa-solid fa-envelope-open-text"></i>
+                            <span class="stamp mono">DÉPLOYÉ</span>
+                            <span class="p-idx font-disp" aria-hidden="true">02</span>
+                        </div>
+                        <div class="project-body">
+                            <h3 class="p-title">Détecteur d'Arnaques par Email</h3>
+                            <p class="p-desc">Conception d'un petit modèle d'intelligence artificielle entraîné à analyser le contenu et la structure des courriels afin d'identifier les campagnes d'hameçonnage ciblées.</p>
+                            <div class="tags mono"><span>Python</span><span>Scikit-Learn</span><span>NLP</span></div>
+                            <span class="p-arrow" aria-hidden="true">↗</span>
+                        </div>
+                    </article>
+
+                    <article class="project">
+                        <div class="project-media">
+                            <span class="p-pattern" aria-hidden="true"></span>
+                            <i class="p-icon fa-solid fa-network-wired"></i>
+                            <span class="stamp mono">SURVEILLANCE</span>
+                            <span class="p-idx font-disp" aria-hidden="true">03</span>
+                        </div>
+                        <div class="project-body">
+                            <h3 class="p-title">Scanner de Failles Réseau</h3>
+                            <p class="p-desc">Cartographie complète d'un réseau local avec détection des logiciels obsolètes et rapprochement automatique avec la base publique des vulnérabilités connues (CVE).</p>
+                            <div class="tags mono"><span>Nmap API</span><span>Bash</span><span>JSON</span></div>
+                            <span class="p-arrow" aria-hidden="true">↗</span>
+                        </div>
+                    </article>
+
+                    <article class="project">
+                        <div class="project-media">
+                            <span class="p-pattern" aria-hidden="true"></span>
+                            <i class="p-icon fa-solid fa-key"></i>
+                            <span class="stamp mono">CHIFFRÉ</span>
+                            <span class="p-idx font-disp" aria-hidden="true">04</span>
+                        </div>
+                        <div class="project-body">
+                            <h3 class="p-title">Coffre-Fort à Mots de Passe</h3>
+                            <p class="p-desc">Gestionnaire de mots de passe local en ligne de commande. Les secrets sont protégés par une dérivation de clé renforcée (PBKDF2) et un chiffrement AES symétrique.</p>
+                            <div class="tags mono"><span>Python</span><span>Cryptography</span></div>
+                            <span class="p-arrow" aria-hidden="true">↗</span>
+                        </div>
+                    </article>
+
+                    <article class="project">
+                        <div class="project-media">
+                            <span class="p-pattern" aria-hidden="true"></span>
+                            <i class="p-icon fa-solid fa-spider"></i>
+                            <span class="stamp stamp-alert mono">PIÈGE ACTIF</span>
+                            <span class="p-idx font-disp" aria-hidden="true">05</span>
+                        </div>
+                        <div class="project-body">
+                            <h3 class="p-title">Piège à Pirates (Honeypot SSH)</h3>
+                            <p class="p-desc">Mise en place d'une fausse porte d'entrée SSH dans un conteneur Docker afin d'attirer les robots malveillants et d'étudier leurs attaques en temps réel.</p>
+                            <div class="tags mono"><span>Docker</span><span>Cowrie</span><span>Linux</span></div>
+                            <span class="p-arrow" aria-hidden="true">↗</span>
+                        </div>
+                    </article>
+
+                    <article class="project">
+                        <div class="project-media">
+                            <span class="p-pattern" aria-hidden="true"></span>
+                            <i class="p-icon fa-solid fa-file-waveform"></i>
+                            <span class="stamp mono">ANALYSE</span>
+                            <span class="p-idx font-disp" aria-hidden="true">06</span>
+                        </div>
+                        <div class="project-body">
+                            <h3 class="p-title">Analyseur de Trafic Réseau</h3>
+                            <p class="p-desc">Outil d'extraction automatique d'indices dans les captures de paquets volumineuses pour repérer des vols anormaux de données ou des requêtes suspectes.</p>
+                            <div class="tags mono"><span>Wireshark</span><span>Tshark</span><span>Bash</span></div>
+                            <span class="p-arrow" aria-hidden="true">↗</span>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ EN COULISSES / CARNET DE LAB (SWIPER) ═══════════ -->
+        <section id="transmissions" class="section">
+            <span class="deco-cross" style="top:18%;right:8%" aria-hidden="true"></span>
+            <div class="wrap">
+                <div class="sec-head">
+                    <div>
+                        <p class="kicker mono">[ EN COULISSES — CARNET DE LAB ]</p>
+                        <h2 class="sec-title font-disp">CARNET<span class="glitch outline" data-text="DE LAB">DE LAB</span></h2>
+                    </div>
+                    <div class="sw-nav mono">
+                        <button class="sw-prev" aria-label="Précédent">←</button>
+                        <button class="sw-next" aria-label="Suivant">→</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wrap">
+                <div class="swiper tswiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <article class="t-card">
+                                <p class="t-head mono">ENTRÉE 001 — FÉV. 2026 — HONEYPOT SSH</p>
+                                <p class="t-body">Un piège ne ment jamais : 300 tentatives de connexion en 48 h, 100 % automatisées. La menace n'est pas hypothétique, elle est déjà connectée.</p>
+                                <p class="t-tag mono">#COWRIE #DOCKER</p>
+                            </article>
+                        </div>
+                        <div class="swiper-slide">
+                            <article class="t-card">
+                                <p class="t-head mono">ENTRÉE 002 — MA PHILOSOPHIE</p>
+                                <p class="t-body">La meilleure faille est celle que l'on trouve avant l'attaquant. Le reste n'est que procédure.</p>
+                                <p class="t-tag mono">#MINDSET #SÉCURITÉ</p>
+                            </article>
+                        </div>
+                        <div class="swiper-slide">
+                            <article class="t-card">
+                                <p class="t-head mono">ENTRÉE 003 — ADMINISTRATION RÉSEAU</p>
+                                <p class="t-body">Le pare-feu ne pardonne pas l'ordre des règles. J'ai appris la rigueur à coups de connexions coupées.</p>
+                                <p class="t-tag mono">#PARE-FEU #RÉSEAU</p>
+                            </article>
+                        </div>
+                        <div class="swiper-slide">
+                            <article class="t-card">
+                                <p class="t-head mono">ENTRÉE 004 — CHIFFREMENT</p>
+                                <p class="t-body">PBKDF2 ×200 000 itérations : parce qu'un coffre-fort doit coûter plus cher à forcer qu'à remplir.</p>
+                                <p class="t-tag mono">#AES256 #PBKDF2</p>
+                            </article>
+                        </div>
+                        <div class="swiper-slide">
+                            <article class="t-card">
+                                <p class="t-head mono">ENTRÉE 005 — ANALYSE DU TRAFIC</p>
+                                <p class="t-body">Wireshark ne dort jamais. Chaque paquet raconte une intention.</p>
+                                <p class="t-tag mono">#PCAP #TSHARK</p>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="swiper-pagination tpag"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ 05 — CONTACT ═══════════ -->
+        <section id="contact" class="section section-panel">
+            <div class="wrap">
+                <div class="sec-head">
+                    <div>
+                        <p class="kicker mono">[ 05 — CONTACT ]</p>
+                        <h2 class="sec-title font-disp">ME<span class="glitch outline" data-text="CONTACTER">CONTACTER</span></h2>
+                    </div>
+                    <span class="sec-idx font-disp" aria-hidden="true">05</span>
+                </div>
+
+                <div class="contact-grid">
+                    <div class="contact-left sr-item">
+                        <span class="avail mono"><i></i>DISPONIBLE — CDI, CDD OU INTERIM</span>
+                        <p class="c-label mono">EMAIL — RÉPONSE SOUS 24 H</p>
+                        <a class="big-link font-disp" href="mailto:pbilingbimax@gmail.com">PBILINGBIMAX@GMAIL.COM</a>
+                        <div class="contact-lines mono">
+                            <div class="c-line"><i class="fa-solid fa-phone txt-acid"></i> +33 7 67 27 17 47</div>
+                            <div class="c-line"><i class="fa-solid fa-location-dot txt-acid"></i> Toulouse, France</div>
+                        </div>
+                        <div class="socials mono">
+                            <a href="https://github.com/Pierre-Bradley" target="_blank" rel="noopener"><i class="fab fa-github"></i> GITHUB <span>↗</span></a>
+                            <a href="https://www.linkedin.com/in/pierre-bradley-bilingbi-max/" target="_blank" rel="noopener"><i class="fab fa-linkedin-in"></i> LINKEDIN <span>↗</span></a>
+                            <a href="docs/CV Technicien Systèmes et Réseaux Junior - Pierre-Bradley BILINGBI-MAX .pdf" target="_blank" rel="noopener"><i class="fa-solid fa-file-pdf"></i> CV — VERSION PDF <span>↗</span></a>
+                        </div>
+                    </div>
+
+                    <div class="form-wrap sr-item">
+                        <form id="contactForm" action="https://formsubmit.co/pbilingbimax@gmail.com" method="POST">
+                            <input type="hidden" name="_captcha" value="false">
+                            <input type="hidden" name="_next" value="https://Pierre-Bradley.github.io/portfolio/">
+                            <div class="field">
+                                <label class="mono" for="f-name">NOM COMPLET</label>
+                                <input class="input mono" id="f-name" type="text" name="name" required autocomplete="name">
+                            </div>
+                            <div class="field">
+                                <label class="mono" for="f-mail">ADRESSE EMAIL</label>
+                                <input class="input mono" id="f-mail" type="email" name="email" required autocomplete="email">
+                            </div>
+                            <div class="field">
+                                <label class="mono" for="f-msg">VOTRE MESSAGE</label>
+                                <textarea class="input mono" id="f-msg" rows="4" name="message" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-solid btn-block magnetic">ENVOYER LE MESSAGE <i class="fa-solid fa-paper-plane"></i></button>
+                            <p class="form-note mono">ENVOI SÉCURISÉ VIA FORMSUBMIT — AUCUNE DONNÉE N'EST STOCKÉE SUR CE SITE.</p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ═══════════ PIED DE PAGE ═══════════ -->
+    <footer class="footer">
+        <div class="wrap">
+            <div class="foot-row mono">
+                <span>© <span id="year">2026</span> PIERRE-BRADLEY BILINGBI-MAX — TOUS DROITS CHIFFRÉS</span>
+                <span>PORTFOLIO 2026 - TOULOUSE, FRANCE</span>
+                <a href="#top" class="foot-btn">RETOUR EN HAUT ↑</a>
+            </div>
         </div>
     </footer>
 
-    <div id="contactModal" class="modal">
-        <div class="modal-content text-center">
-            <i class="fas fa-check-circle text-5xl text-emerald-400 mb-4 drop-shadow-[0_0_10px_rgba(0,255,157,0.8)]"></i>
-            <h3 class="text-2xl font-bold mb-2 text-white">Ping Réussi !</h3>
-            <p class="text-gray-400 mb-6 font-mono text-sm">Données de contact transmises avec succès à l'infrastructure.</p>
-            <button onclick="closeModal()" class="bg-emerald-400 hover:bg-emerald-500 text-black font-bold py-2 px-8 rounded transition font-mono text-xs">
-                CLOSE_SESSION
-            </button>
+    <!-- ═══════════ FENÊTRE DE CONFIRMATION ═══════════ -->
+    <div class="modal" id="contactModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-box">
+            <i class="fa-solid fa-circle-check txt-acid"></i>
+            <h3 class="font-disp" id="modalTitle">MESSAGE ENVOYÉ !</h3>
+            <p class="mono">Votre message a bien été transmis. Je vous réponds sous 24 à 48 h.</p>
+            <button class="btn btn-solid" id="modalOk">FERMER</button>
         </div>
     </div>
 
+    <!-- Librairies -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+
     <script>
-        // --- 1. LOADER ---
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                const loader = document.querySelector('.loader');
-                loader.style.opacity = '0';
-                setTimeout(() => { loader.style.display = 'none'; }, 500);
-            }, 1200);
-        });
+    /* ═══════════════════════════════════════════════════════
+    APPLICATION — chaque sous-système est isolé (try/catch)
+    ═══════════════════════════════════════════════════════ */
+    const $  = (s, c = document) => c.querySelector(s);
+    const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const DPR = Math.min(2, window.devicePixelRatio || 1);
+    const INK = '#E8E8E4', BGC = '#060708';
+    const dim = a => `rgba(232,232,228,${a})`;
 
-        // --- 2. CANVAS MATRICE BINAIRE ---
-        const canvas = document.getElementById('matrixCanvas');
-        const ctx = canvas.getContext('2d');
+    /* ── 1. LOADER ────────────────────────────────────────── */
+    try {
+        const LOGS = [
+            '> Initialisation du système ......... OK',
+            '> Chargement des séquences .......... OK',
+            '> Vérification de la sécurité ....... OK',
+            '> Préparation du contenu ............ OK',
+            '> Accès autorisé — Bienvenue'
+        ];
+        let pageLoaded = false;
+        window.addEventListener('load', () => pageLoaded = true);
 
-        function resizeCanvas() {
-            const parent = canvas.parentElement;
-            canvas.width = parent.offsetWidth;
-            canvas.height = parent.offsetHeight;
+        function loaderOut() {
+            const go = () => {
+                const L = $('#loader');
+                if (window.anime) anime({ targets: L, translateY: '-100%', duration: 850, easing: 'easeInOutExpo',
+                    complete: () => L.style.display = 'none' });
+                else L.style.display = 'none';
+                heroIntro();
+            };
+            if (pageLoaded) go();
+            else { const t = setTimeout(go, 1500); window.addEventListener('load', () => { clearTimeout(t); go(); }, { once: true }); }
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+        LOGS.forEach((l, i) => setTimeout(() => {
+            const d = document.createElement('div'); d.textContent = l; $('#loaderLog').appendChild(d);
+        }, 200 + i * 240));
+        if (window.anime) {
+            const o = { v: 0 };
+            anime({ targets: o, v: 100, round: 1, duration: 1900, easing: 'easeInOutQuart',
+                update: () => { $('#loaderCount').textContent = String(o.v).padStart(3, '0'); $('#loaderFill').style.width = o.v + '%'; },
+                complete: loaderOut });
+        } else { $('#loaderCount').textContent = '100'; setTimeout(loaderOut, 400); }
+    } catch (e) { console.warn('loader', e); const L = $('#loader'); if (L) L.style.display = 'none'; }
 
-        const fontSize = 16;
-        const columns = Math.floor(canvas.width / fontSize);
-        const rainDrops = Array(columns).fill(1);
+    /* ── 2. INTRO HÉRO ────────────────────────────────────── */
+    function heroIntro() {
+        try {
+            const lines = $$('.line-inner'), items = $$('.intro-item'), huds = $$('.hud, .reel-hud, .scroll-cue');
+            if (window.anime && !reduced) {
+                anime({ targets: lines, translateY: ['110%', '0%'], duration: 1000, delay: anime.stagger(130), easing: 'easeOutExpo' });
+                anime({ targets: items, opacity: [0, 1], translateY: [24, 0], duration: 800, delay: anime.stagger(110, { start: 300 }), easing: 'easeOutCubic' });
+                anime({ targets: huds, opacity: [0, 1], duration: 900, delay: 900, easing: 'easeOutQuad' });
+            } else [...lines, ...items, ...huds].forEach(el => { el.style.transform = 'none'; el.style.opacity = 1; });
+        } catch (e) { console.warn('intro', e); }
+    }
 
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.08)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+    /* ── 3. ÉTAT AUDIO GLOBAL (déclaré tôt, utilisé partout) ─ */
+    let actx = null, master = null, muted = true, musicTimer = null;
 
-            ctx.fillStyle = '#00ff9d';
-            ctx.font = fontSize + 'px monospace';
+    /* ── 4. REEL — 5 SÉQUENCES N&B TRÈS CONTRASTÉES ───────── */
+    function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+    const hexB = R => (R() * 256 | 0).toString(16).padStart(2, '0').toUpperCase();
 
-            for (let i = 0; i < rainDrops.length; i++) {
-                const text = Math.random() > 0.5 ? '1' : '0';
-                const x = i * fontSize;
-                const y = rainDrops[i] * fontSize;
+    function setup(c) { const x = c.getContext('2d'); x.fillStyle = '#000'; x.fillRect(0, 0, c.width, c.height); x.textBaseline = 'top'; return x; }
+    function film(x, w, h) {
+        for (let y = 0; y < h; y += 3 * DPR) { x.fillStyle = 'rgba(0,0,0,.10)'; x.fillRect(0, y, w, DPR); }
+        const g = x.createRadialGradient(w / 2, h / 2, h * .25, w / 2, h / 2, h * .9);
+        g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.5)');
+        x.fillStyle = g; x.fillRect(0, 0, w, h);
+    }
+    function banner(x, w, s, txt) { // bandeau de titre inversé
+        x.fillStyle = INK; x.fillRect(0, 0, w, s * 2.3);
+        x.fillStyle = '#000'; x.font = `700 ${s}px "JetBrains Mono", monospace`;
+        x.fillText(txt, s, s * .62);
+    }
 
-                ctx.fillText(text, x, y);
-
-                if (y > canvas.height && Math.random() > 0.975) {
-                    rainDrops[i] = 0;
-                }
-                rainDrops[i]++;
+    function drawHex(c) {
+        const R = rng(101), x = setup(c), w = c.width, h = c.height;
+        const s = Math.max(13, w / 85), lh = s * 1.75, cw = s * 2.55;
+        const cols = Math.floor(w / cw), rows = Math.ceil(h / lh);
+        banner(x, w, s, 'AUTH.LOG — JOURNAL DES CONNEXIONS');
+        x.font = `${s}px "JetBrains Mono", monospace`;
+        for (let r = 1; r < rows; r++) {
+            const y = r * lh, inv = R() < .16;
+            if (inv) { x.fillStyle = INK; x.fillRect(0, y - s * .25, w, lh - s * .3); x.fillStyle = '#000'; }
+            else x.fillStyle = R() < .6 ? dim(.9) : dim(.35);
+            for (let k = 0; k < cols; k++) x.fillText(hexB(R), k * cw, y);
+        }
+        film(x, w, h);
+    }
+    function drawPackets(c) {
+        const R = rng(202), x = setup(c), w = c.width, h = c.height;
+        const s = Math.max(13, w / 95), lanes = 7, laneH = h / lanes, barH = s * 1.5;
+        banner(x, w, s, 'TRAFIC RÉSEAU — CAPTURE EN DIRECT');
+        x.font = `${s}px "JetBrains Mono", monospace`;
+        for (let i = 0; i < lanes; i++) {
+            const yMid = (i + 1) * laneH - laneH * .28;
+            x.fillStyle = dim(.8);
+            x.fillText(`09:${String(i * 7 + 3).padStart(2, '0')}:${String(R() * 59 | 0).padStart(2, '0')}`, s, yMid - s * .5);
+            let px = s * 12;
+            while (px < w - s * 3) {
+                const bw = s * 3 + R() * s * 9, by = yMid - barH / 2;
+                if (R() < .45) { x.fillStyle = INK; x.fillRect(px, by, bw, barH); x.fillStyle = '#000'; }
+                else { x.strokeStyle = dim(.85); x.lineWidth = Math.max(1.5, DPR); x.strokeRect(px, by, bw, barH); x.fillStyle = dim(.85); }
+                x.fillText(String(40 + R() * 1300 | 0), px + s * .35, yMid - s * .5);
+                px += bw + s * 1.1;
             }
         }
-        setInterval(drawMatrix, 33);
-
-        // --- 3. MACHINE À ÉCRIRE ---
-        function typeWriter(element, text, speed) {
-            let i = 0;
-            element.innerHTML = "";
-            function typing() {
-                if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
-                    i++;
-                    setTimeout(typing, speed);
-                } else {
-                    element.classList.add('typing');
-                }
-            }
-            typing();
+        const nx = w * .7;
+        x.strokeStyle = INK; x.lineWidth = 2 * DPR; x.setLineDash([8 * DPR, 8 * DPR]);
+        x.beginPath(); x.moveTo(nx, s * 2.3); x.lineTo(nx, h); x.stroke(); x.setLineDash([]);
+        x.fillStyle = INK; x.fillRect(nx + 8 * DPR, s * 2.8, s * 4.6, s * 1.6);
+        x.fillStyle = '#000'; x.fillText('LIVE', nx + 8 * DPR + s * .4, s * 3.05);
+        film(x, w, h);
+    }
+    function drawTopo(c) {
+        const R = rng(303), x = setup(c), w = c.width, h = c.height, N = 20, pts = [];
+        const gs = Math.max(80, w / 12);
+        x.strokeStyle = dim(.07); x.lineWidth = DPR;
+        for (let gx = gs / 2; gx < w; gx += gs) { x.beginPath(); x.moveTo(gx, 0); x.lineTo(gx, h); x.stroke(); }
+        for (let gy = gs / 2; gy < h; gy += gs) { x.beginPath(); x.moveTo(0, gy); x.lineTo(w, gy); x.stroke(); }
+        for (let i = 0; i < N; i++) pts.push({ x: gs * .4 + R() * (w - gs * .8), y: gs * .4 + R() * (h - gs * .8) });
+        x.lineWidth = Math.max(1.5, DPR);
+        pts.forEach(p => {
+            pts.map(q => ({ q, d: (q.x - p.x) ** 2 + (q.y - p.y) ** 2 })).sort((a, b) => a.d - b.d).slice(1, 3)
+            .forEach(({ q }) => { x.strokeStyle = dim(.3); x.beginPath(); x.moveTo(p.x, p.y); x.lineTo(q.x, q.y); x.stroke(); });
+        });
+        x.fillStyle = INK; pts.forEach(p => x.fillRect(p.x - 2 * DPR, p.y - 2 * DPR, 4 * DPR, 4 * DPR));
+        const s = Math.max(12, w / 70);
+        x.font = `700 ${s}px "JetBrains Mono", monospace`;
+        for (let i = 0; i < 5; i++) { // machines étiquetées
+            const p = pts[R() * N | 0], tw = s * 4.6;
+            x.fillStyle = INK; x.fillRect(p.x - s * .5, p.y - s * .5, s, s);
+            x.fillStyle = INK; x.fillRect(p.x + s, p.y - s * .9, tw, s * 1.6);
+            x.fillStyle = '#000'; x.fillText('PC-' + (i + 1), p.x + s * 1.25, p.y - s * .55);
         }
-        window.addEventListener('load', () => {
-            typeWriter(document.getElementById('cyberText'), "Cybersécurité", 120);
+        const t = { x: w * .5, y: h * .45 }; // serveur central
+        [s * 1.4, s * 2.4].forEach((r, i) => { x.strokeStyle = i ? dim(.35) : INK; x.lineWidth = 2 * DPR; x.beginPath(); x.arc(t.x, t.y, r, 0, 7); x.stroke(); });
+        x.strokeStyle = INK; x.lineWidth = DPR;
+        x.beginPath(); x.moveTo(t.x - s * 3, t.y); x.lineTo(t.x + s * 3, t.y); x.moveTo(t.x, t.y - s * 3); x.lineTo(t.x, t.y + s * 3); x.stroke();
+        x.fillStyle = INK; x.fillRect(t.x - s * .6, t.y - s * .6, s * 1.2, s * 1.2);
+        x.fillStyle = INK; x.fillRect(t.x + s * 2.8, t.y - s * .9, s * 8.5, s * 1.6);
+        x.fillStyle = '#000'; x.fillText('SERVEUR', t.x + s * 3.15, t.y - s * .55);
+        film(x, w, h);
+    }
+    function drawTerm(c) {
+        const R = rng(404), x = setup(c), w = c.width, h = c.height;
+        const s = Math.max(14, w / 78), lh = s * 1.9;
+        banner(x, w, s, 'ADMINISTRATION — INVITE DE COMMANDE');
+        x.font = `${s}px "JetBrains Mono", monospace`;
+        const L = [
+            ['admin@serveur:~$ ', 'analyse du réseau local', 0],
+            ['', 'Recherche des machines connectées…', 0],
+            ['', 'TROUVÉ  poste-01  port 22  ouvert', 0],
+            ['', 'TROUVÉ  poste-01  port 80  ouvert', 1],
+            ['admin@serveur:~$ ', 'test des failles connues', 0],
+            ['', 'ALERTE : dossier public accessible', 0],
+            ['admin@serveur:~$ ', 'connexion sécurisée poste-01', 0],
+            ['', 'mot de passe : ******** (accepté)', 1],
+            ['admin@serveur:~$ ', 'vérification des droits', 0],
+            ['', 'droits limités — système sain', 1],
+        ];
+        L.forEach((l, i) => {
+            const y = s * 3.4 + i * lh, full = l[0] + l[1];
+            if (l[2]) {
+                const tw = x.measureText(full).width + s;
+                x.fillStyle = INK; x.fillRect(s * .6, y - s * .3, tw, lh * .92);
+            }
+            x.fillStyle = l[2] ? '#000' : INK;
+            x.fillText(l[0], s, y);
+            x.fillStyle = l[2] ? '#000' : (l[0] ? INK : dim(.6));
+            x.fillText(l[1], s + x.measureText(l[0]).width, y);
         });
+        x.fillStyle = INK; x.fillRect(s, s * 3.4 + L.length * lh, s * .6, s * 1.1); // curseur
+        film(x, w, h);
+    }
+    function drawCipher(c) {
+        const R = rng(505), x = setup(c), w = c.width, h = c.height;
+        const s = Math.max(13, w / 105), CH = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789+/<>{}[]#$%&';
+        banner(x, w, s, 'CHIFFREMENT DES DONNÉES');
+        x.font = `${s}px "JetBrains Mono", monospace`;
+        for (let py = s * 3; py < h; py += s * 1.7) for (let px = s * .5; px < w; px += s * 1.4) {
+            x.fillStyle = R() < .18 ? INK : dim(.12 + R() * .3);
+            x.fillText(CH[R() * CH.length | 0], px, py);
+        }
+        const rw = Math.min(w * .55, s * 30), rh = s * 5.4, rx = (w - rw) / 2, ry = h * .36;
+        x.fillStyle = INK; x.fillRect(rx, ry, rw, rh);
+        x.fillStyle = '#000';
+        x.font = `700 ${s * 1.5}px "JetBrains Mono", monospace`;
+        x.fillText('COFFRE SÉCURISÉ', rx + s, ry + s * .55);
+        x.font = `${s}px "JetBrains Mono", monospace`;
+        x.fillText('CLÉ : 9F 86 D0 81 88 4C 7D 65', rx + s, ry + s * 2.5);
+        x.fillText('CONTENU : DÉCHIFFRÉ ✓', rx + s, ry + s * 3.9);
+        film(x, w, h);
+    }
 
-        // --- 4. SCROLL OBSERVER ---
-        const sections = document.querySelectorAll('.section-trigger');
-        const animateOnScroll = function() {
-            sections.forEach(sec => {
-                if (sec.getBoundingClientRect().top < window.innerHeight - 100) {
-                    sec.classList.add('visible');
-                }
-            });
+    const FRAMES = [
+        { label: 'JOURNAL DES CONNEXIONS',    draw: drawHex },
+        { label: 'TRAFIC RÉSEAU EN DIRECT',   draw: drawPackets },
+        { label: 'CARTOGRAPHIE DU RÉSEAU',    draw: drawTopo },
+        { label: 'ADMINISTRATION SYSTÈME',    draw: drawTerm },
+        { label: 'CHIFFREMENT DES DONNÉES',   draw: drawCipher },
+    ];
+    try {
+        const reel = $('#reel');
+        FRAMES.forEach((f, i) => {
+            const fig = document.createElement('figure');
+            fig.className = `reel-frame kb-${i % 2 ? 'b' : 'a'}`;
+            f.canvas = document.createElement('canvas');
+            fig.appendChild(f.canvas); reel.appendChild(fig);
+            const b = document.createElement('button');
+            b.setAttribute('aria-label', 'Séquence ' + (i + 1));
+            b.addEventListener('click', () => { goFrame(i); startReel(); });
+            $('#reelDots').appendChild(b); f.dot = b;
+        });
+        function sizeReel() {
+            const w = reel.clientWidth, h = reel.clientHeight;
+            if (!w || !h) return false;
+            FRAMES.forEach(f => { f.canvas.width = w * DPR; f.canvas.height = h * DPR; });
+            return true;
+        }
+        let curFrame = 0, reelTimer = null;
+        function goFrame(i) {
+            curFrame = i;
+            $$('.reel-frame').forEach((el, k) => el.classList.toggle('active', k === i));
+            $('#frameIdx').textContent = String(i + 1).padStart(2, '0');
+            $('#frameLabel').textContent = FRAMES[i].label;
+            FRAMES.forEach((f, k) => f.dot.classList.toggle('on', k === i));
+            const bar = $('#reelBar');
+            bar.classList.remove('run'); void bar.offsetWidth; bar.classList.add('run');
+            pingBlip();
+        }
+        function drawAll() { FRAMES.forEach(f => { try { f.draw(f.canvas); } catch (e) { console.warn('frame', e); } }); }
+        function startReel() { clearInterval(reelTimer); if (reduced) return; reelTimer = setInterval(() => goFrame((curFrame + 1) % FRAMES.length), 7000); }
+
+        requestAnimationFrame(() => {           // attend le layout, puis dessine + démarre
+            sizeReel(); drawAll(); goFrame(0); startReel();
+        });
+        let rzT; window.addEventListener('resize', () => {
+            clearTimeout(rzT);
+            rzT = setTimeout(() => { if (sizeReel()) drawAll(); }, 220);
+        });
+        if (document.fonts) document.fonts.ready.then(() => { if (sizeReel()) drawAll(); });
+        window._reelAPI = { goFrame, startReel, get cur() { return curFrame; } }; // pour visibilitychange
+    } catch (e) { console.warn('reel', e); }
+
+    /* ── 5. MUSIQUE D'AMBIANCE (WebAudio, coupée par défaut) ─ */
+    function buildAudio() {
+        actx = new (window.AudioContext || window.webkitAudioContext)();
+        master = actx.createGain(); master.gain.value = 0; master.connect(actx.destination);
+        // nappe grave (fond musical)
+        const padGain = actx.createGain(); padGain.gain.value = .14;
+        const padFilter = actx.createBiquadFilter(); padFilter.type = 'lowpass'; padFilter.frequency.value = 420;
+        padGain.connect(padFilter); padFilter.connect(master);
+        [55, 110, 110.6].forEach(f => { const o = actx.createOscillator(); o.type = 'triangle'; o.frequency.value = f; o.connect(padGain); o.start(); });
+        const lfo = actx.createOscillator(), lfoG = actx.createGain();
+        lfo.frequency.value = .08; lfoG.gain.value = .05;
+        lfo.connect(lfoG); lfoG.connect(padGain.gain); lfo.start();
+    }
+    function playNote(freq, dur = .38, vol = .16) {
+        if (!actx || actx.state !== 'running') return;
+        const t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain();
+        o.type = 'sine'; o.frequency.value = freq;
+        o.connect(g); g.connect(master);
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(vol, t + .03);
+        g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+        o.start(t); o.stop(t + dur + .05);
+    }
+    const SCALE = [220, 261.63, 293.66, 329.63, 392, 440, 523.25, 587.33];
+    const PATTERN = [0, 2, 4, 3, 5, 4, 2, 1, 6, 4, 3, 2, 0, 2, 4, 7];
+    let step = 0;
+    function startMusic() {
+        clearInterval(musicTimer);
+        const tick = () => {
+            const n = PATTERN[step % PATTERN.length];
+            playNote(SCALE[n]);
+            if (step % 4 === 0) playNote(SCALE[n] / 2, .55, .10); // basse une mesure sur quatre
+            step++;
         };
-        window.addEventListener('load', animateOnScroll);
-        window.addEventListener('scroll', animateOnScroll);
+        tick(); musicTimer = setInterval(tick, 420);
+    }
+    function stopMusic() { clearInterval(musicTimer); musicTimer = null; }
+    function pingBlip() { if (!muted) playNote(880, .3, .10); }
 
-        // --- 5. TIMELINES SEQUENTIELLES ---
-        const timelineItems = document.querySelectorAll('.timeline-item');
-        const animateTimeline = function() {
-            timelineItems.forEach((item, index) => {
-                if (item.getBoundingClientRect().top < window.innerHeight - 100) {
-                    setTimeout(() => {
-                        item.style.opacity = '1';
-                        item.style.transform = 'translateX(0)';
-                    }, index * 150);
-                }
+    try {
+        $('#soundBtn').addEventListener('click', () => {
+            try { if (!actx) buildAudio(); } catch (e) {
+                $('#soundLabel').textContent = 'N/D'; return;
+            }
+            muted = !muted;
+            $('#soundBtn').classList.toggle('unmuted', !muted);
+            $('#soundBtn').setAttribute('aria-pressed', String(!muted));
+            $('#soundLabel').textContent = muted ? 'OFF' : 'ON';
+            const t = actx.currentTime;
+            if (muted) {
+                master.gain.cancelScheduledValues(t); master.gain.linearRampToValueAtTime(0, t + .25);
+                stopMusic(); setTimeout(() => { if (muted && actx.state === 'running') actx.suspend(); }, 300);
+            } else {
+                actx.resume().then(() => {
+                    const t2 = actx.currentTime;
+                    master.gain.cancelScheduledValues(t2);
+                    master.gain.linearRampToValueAtTime(.55, t2 + .8);
+                    startMusic();
+                });
+            }
+        });
+    } catch (e) { console.warn('audio-ui', e); }
+
+    /* ── 6. FOND RÉSEAU ANIMÉ ─────────────────────────────── */
+    try {
+        const bg = $('#bgNet'), bx = bg.getContext('2d');
+        let bw, bh, packets = [], rings = [];
+        function spawnP() {
+            const g = 90 * DPR, sp = (40 + Math.random() * 70) * DPR;
+            if (Math.random() < .5) return { x: Math.random() * bw, y: Math.round(Math.random() * bh / g) * g, dx: (Math.random() < .5 ? -1 : 1) * sp, dy: 0, trail: [] };
+            return { x: Math.round(Math.random() * bw / g) * g, y: Math.random() * bh, dx: 0, dy: (Math.random() < .5 ? -1 : 1) * sp, trail: [] };
+        }
+        function bgResize() {
+            bw = bg.width = innerWidth * DPR; bh = bg.height = innerHeight * DPR;
+            bg.style.width = innerWidth + 'px'; bg.style.height = innerHeight + 'px';
+            packets = Array.from({ length: Math.min(18, Math.floor(innerWidth / 90)) }, spawnP);
+        }
+        function bgDraw() {
+            bx.clearRect(0, 0, bw, bh);
+            bx.fillStyle = dim(.055);
+            const g = 90 * DPR;
+            for (let X = g / 2; X < bw; X += g) for (let Y = g / 2; Y < bh; Y += g) bx.fillRect(X, Y, 1.5 * DPR, 1.5 * DPR);
+            rings = rings.filter(r => r.r < r.max);
+            rings.forEach(r => {
+                r.r += 1.4 * DPR;
+                bx.strokeStyle = `rgba(0,255,106,${(1 - r.r / r.max) * .5})`; bx.lineWidth = DPR;
+                bx.beginPath(); bx.arc(r.x, r.y, r.r, 0, 7); bx.stroke();
             });
-        };
-        window.addEventListener('load', animateTimeline);
-        window.addEventListener('scroll', animateTimeline);
+            if (Math.random() < .008 && rings.length < 3) { const p = packets[Math.random() * packets.length | 0]; rings.push({ x: p.x, y: p.y, r: 2, max: 60 * DPR }); }
+            packets.forEach(p => {
+                p.trail.push([p.x, p.y]); if (p.trail.length > 7) p.trail.shift();
+                p.trail.forEach(([tx, ty], i) => { bx.fillStyle = `rgba(0,255,106,${(i / p.trail.length) * .3})`; bx.fillRect(tx - 1.5 * DPR, ty - 1.5 * DPR, 3 * DPR, 3 * DPR); });
+                bx.fillStyle = 'rgba(0,255,106,.9)';
+                bx.fillRect(p.x - 1.5 * DPR, p.y - 1.5 * DPR, 3 * DPR, 3 * DPR);
+                p.x += p.dx; p.y += p.dy;
+                if (p.x < -20) p.x = bw + 20; if (p.x > bw + 20) p.x = -20;
+                if (p.y < -20) p.y = bh + 20; if (p.y > bh + 20) p.y = -20;
+            });
+            requestAnimationFrame(bgDraw);
+        }
+        bgResize(); window.addEventListener('resize', bgResize);
+        requestAnimationFrame(bgDraw);
+    } catch (e) { console.warn('bgNet', e); }
 
-        // --- 6. MODAL DE FORMULAIRE (AVEC TRANSMISSION VRAIE) ---
-        const modal = document.getElementById('contactModal');
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            // On laisse passer l'envoi vers FormSubmit mais on affiche le modal visuel d'abord
-            modal.style.display = 'flex';
-        });
-        function closeModal() { modal.style.display = 'none'; }
-        window.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    /* ── 7. ROTATEUR + HORLOGE ────────────────────────────── */
+    try {
+        const ROLES = ['Systèmes & Réseaux', 'Cybersécurité', 'Sécurité offensive', 'Administration système'];
+        const el = $('#rotator');
+        if (reduced) el.textContent = ROLES[0];
+        else {
+            let ri = 0, ci = 0, del = false;
+            (function tick() {
+                const word = ROLES[ri];
+                ci += del ? -1 : 1;
+                el.textContent = word.slice(0, ci);
+                let d = del ? 38 : 85;
+                if (!del && ci === word.length) { del = true; d = 2200; }
+                else if (del && ci === 0) { del = false; ri = (ri + 1) % ROLES.length; d = 350; }
+                setTimeout(tick, d);
+            })();
+        }
+        const tickClock = () => $('#hudClock').textContent = new Date().toLocaleTimeString('fr-FR', { hour12: false });
+        tickClock(); setInterval(tickClock, 1000);
+    } catch (e) { console.warn('rotator', e); }
 
-        // --- 7. TOGGLE DU MENU MOBILE RESPONSIVE (CORRIGÉ PAR ID) ---
-        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
-            const menu = document.getElementById('navMenu');
-            menu.classList.toggle('hidden');
-            menu.classList.toggle('mobile-active');
+    /* ── 8. SCROLLREVEAL + COMPTEURS + JAUGES + GRAPHIQUES ── */
+    try {
+        $$('.meter').forEach(m => { const seg = m.querySelector('.segments'); for (let i = 0; i < 24; i++) seg.appendChild(document.createElement('i')); });
+
+        function countUp(el) {
+            const t = parseFloat(el.dataset.target), suf = el.dataset.suffix || '', pad = +(el.dataset.pad || 0);
+            const fmt = v => String(Math.round(v)).padStart(pad, '0') + suf;
+            if (window.anime && !reduced) { const o = { v: 0 }; anime({ targets: o, v: t, round: 1, duration: 1600, easing: 'easeOutExpo', update: () => el.textContent = fmt(o.v) }); }
+            else el.textContent = fmt(t);
+        }
+        function fillMeter(m) {
+            const lvl = +m.dataset.level, segs = $$('i', m.querySelector('.segments')), val = m.querySelector('.meter-val');
+            const on = Math.round(lvl / 100 * segs.length);
+            if (window.anime && !reduced) {
+                const o = { v: 0 };
+                anime({ targets: o, v: lvl, round: 1, duration: 1200, easing: 'easeOutExpo', update: () => val.textContent = o.v + '%' });
+                segs.slice(0, on).forEach((s, i) => setTimeout(() => s.classList.add('on'), 140 + i * 26));
+            } else { val.textContent = lvl + '%'; segs.slice(0, on).forEach(s => s.classList.add('on')); }
+        }
+        /* Anneaux (donuts) */
+        function buildDonut(el) {
+            const R = 40, C = 2 * Math.PI * R;
+            el.innerHTML = `
+                <div class="d-svg">
+                    <svg viewBox="0 0 100 100" aria-hidden="true">
+                        <circle cx="50" cy="50" r="${R}" class="d-track"/>
+                        <circle cx="50" cy="50" r="${R}" class="d-prog" stroke-dasharray="${C}" stroke-dashoffset="${C}" transform="rotate(-90 50 50)"/>
+                    </svg>
+                    <div class="d-val mono"><b>0%</b></div>
+                </div>
+                <p class="d-name mono">${el.dataset.name}</p>`;
+            el._prog = el.querySelector('.d-prog'); el._val = el.querySelector('.d-val b'); el._C = C;
+        }
+        function animateDonut(el) {
+            const val = +el.dataset.val;
+            if (reduced || !window.anime) { el._prog.style.strokeDashoffset = el._C * (1 - val / 100); el._val.textContent = val + '%'; return; }
+            const o = { v: 0 };
+            anime({ targets: o, v: val, round: 1, duration: 1500, easing: 'easeOutExpo',
+                update: () => { el._prog.style.strokeDashoffset = el._C * (1 - o.v / 100); el._val.textContent = o.v + '%'; } });
+        }
+        $$('.donut').forEach(d => { buildDonut(d); new IntersectionObserver((es, io) => es.forEach(e => { if (e.isIntersecting) { animateDonut(e.target); io.unobserve(e.target); } }), { threshold: .35 }).observe(d); });
+
+        /* Graphique en étoile */
+        (function () {
+            const svg = $('#skillWeb'); if (!svg) return;
+            const NS = 'http://www.w3.org/2000/svg', CX = 130, CY = 110, R = 76;
+            const AXES = [
+                { label: 'RÉSEAUX', v: .85 }, { label: 'SYSTÈMES', v: .90 }, { label: 'PROGRAMMATION', v: .80 },
+                { label: 'PENTESTING', v: .78 }, { label: 'CHIFFREMENT', v: .75 }, { label: 'FORENSIQUE', v: .70 },
+            ];
+            const mk = (tag, attrs) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); svg.appendChild(n); return n; };
+            const angle = i => Math.PI * 2 * i / AXES.length - Math.PI / 2;
+            [.25, .5, .75, 1].forEach(f => mk('polygon', { points: AXES.map((_, i) => (CX + Math.cos(angle(i)) * R * f) + ',' + (CY + Math.sin(angle(i)) * R * f)).join(' '), class: 'web-ring' }));
+            AXES.forEach((ax, i) => {
+                mk('line', { x1: CX, y1: CY, x2: CX + Math.cos(angle(i)) * R, y2: CY + Math.sin(angle(i)) * R, class: 'web-axis' });
+                const t = mk('text', { x: CX + Math.cos(angle(i)) * (R + 18), y: CY + Math.sin(angle(i)) * (R + 18), class: 'web-label', 'text-anchor': 'middle', 'dominant-baseline': 'middle' });
+                t.textContent = ax.label;
+            });
+            const poly = mk('polygon', { class: 'web-data', points: '' });
+            const dots = AXES.map(() => mk('circle', { r: 3, class: 'web-dot', opacity: 0, cx: CX, cy: CY }));
+            const setPts = f => poly.setAttribute('points', AXES.map((ax, i) => (CX + Math.cos(angle(i)) * R * ax.v * f) + ',' + (CY + Math.sin(angle(i)) * R * ax.v * f)).join(' '));
+            new IntersectionObserver((es, io) => es.forEach(e => {
+                if (!e.isIntersecting) return; io.disconnect();
+                if (reduced || !window.anime) {
+                    setPts(1);
+                    dots.forEach((d, i) => { d.setAttribute('cx', CX + Math.cos(angle(i)) * R * AXES[i].v); d.setAttribute('cy', CY + Math.sin(angle(i)) * R * AXES[i].v); d.setAttribute('opacity', 1); });
+                    return;
+                }
+                const anim = { f: 0 };
+                anime({ targets: anim, f: 1, duration: 1400, easing: 'easeOutExpo', update: () => setPts(anim.f),
+                    complete: () => dots.forEach((d, i) => setTimeout(() => {
+                        d.setAttribute('cx', CX + Math.cos(angle(i)) * R * AXES[i].v);
+                        d.setAttribute('cy', CY + Math.sin(angle(i)) * R * AXES[i].v);
+                        anime({ targets: d, opacity: 1, duration: 300 });
+                    }, i * 90)) });
+            }), { threshold: .4 }).observe(svg);
+        })();
+
+        if (window.ScrollReveal) {
+            const sr = ScrollReveal({ distance: '26px', duration: 900, easing: 'cubic-bezier(0.5,0,0,1)', viewFactor: .15, reset: false });
+            sr.reveal('.sec-head', { origin: 'left', interval: 80 });
+            sr.reveal('.sr-item', { origin: 'bottom', interval: 90 });
+            sr.reveal('.project', { interval: 100 });
+            sr.reveal('.tl-item', { interval: 130 });
+            sr.reveal('.stat', { interval: 100, afterReveal: el => countUp(el.querySelector('.stat-num')) });
+            sr.reveal('.meter', { interval: 90, afterReveal: fillMeter });
+        } else { $$('.stat-num').forEach(countUp); $$('.meter').forEach(fillMeter); }
+    } catch (e) { console.warn('reveal', e); }
+
+    /* ── 9. SWIPER — CARNET DE LAB (navigation manuelle fiable) ─ */
+    let labSwiper = null;
+    try {
+        labSwiper = new Swiper('.tswiper', {
+            slidesPerView: 'auto', spaceBetween: 20, grabCursor: true,
+            rewind: true, speed: 650,
+            autoplay: { delay: 4200, disableOnInteraction: false, pauseOnMouseEnter: true },
+            pagination: { el: '.tpag', clickable: true },
+            keyboard: { enabled: true },
         });
+    } catch (e) { console.warn('swiper', e); }
+    try {
+        const bN = $('.sw-next'), bP = $('.sw-prev');
+        if (bN) bN.addEventListener('click', () => labSwiper && labSwiper.slideNext());
+        if (bP) bP.addEventListener('click', () => labSwiper && labSwiper.slidePrev());
+    } catch (e) { console.warn('swiper-nav', e); }
+
+    /* ── 10. NAV ──────────────────────────────────────────── */
+    try {
+        const navEl = $('#nav'), prog = $('#scrollProgress');
+        let ticking = false;
+        addEventListener('scroll', () => {
+            if (!ticking) requestAnimationFrame(() => {
+                const d = document.documentElement;
+                navEl.classList.toggle('scrolled', scrollY > 30);
+                prog.style.width = (scrollY / (d.scrollHeight - innerHeight) * 100) + '%';
+                ticking = false;
+            });
+            ticking = true;
+        }, { passive: true });
+
+        new IntersectionObserver(es => es.forEach(e => {
+            if (e.isIntersecting) {
+                $$('.nav-links a').forEach(a => a.classList.remove('active'));
+                const l = $(`.nav-links a[href="#${e.target.id}"]`);
+                if (l) l.classList.add('active');
+            }
+        }), { rootMargin: '-40% 0px -55% 0px' })
+        .observe && $$('main section[id]').forEach(s => {}); // (voir ci-dessous)
+    } catch (e) { console.warn('nav', e); }
+    /* (version corrigée et simple du bloc au-dessus) */
+    try {
+        const secIO = new IntersectionObserver(es => es.forEach(e => {
+            if (e.isIntersecting) {
+                $$('.nav-links a').forEach(a => a.classList.remove('active'));
+                const l = $(`.nav-links a[href="#${e.target.id}"]`);
+                if (l) l.classList.add('active');
+            }
+        }), { rootMargin: '-40% 0px -55% 0px' });
+        $$('main section[id]').forEach(s => secIO.observe(s));
+    } catch (e) { console.warn('nav-active', e); }
+
+    try {
+        const burger = $('#burger'), mm = $('#mobileMenu');
+        burger.addEventListener('click', () => {
+            const open = mm.classList.toggle('open');
+            burger.classList.toggle('open', open);
+            burger.setAttribute('aria-expanded', String(open));
+            document.body.style.overflow = open ? 'hidden' : '';
+            if (open && window.anime && !reduced) anime({ targets: '.mm-link', translateY: [40, 0], opacity: [0, 1], delay: anime.stagger(70, { start: 120 }), duration: 700, easing: 'easeOutExpo' });
+        });
+        $$('.mm-link').forEach(a => a.addEventListener('click', () => {
+            mm.classList.remove('open'); burger.classList.remove('open');
+            burger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }));
+    } catch (e) { console.warn('burger', e); }
+
+    /* ── 11. BOUTONS MAGNÉTIQUES + PARALLAXE ──────────────── */
+    try {
+        if (!reduced) $$('.magnetic').forEach(btn => {
+            btn.addEventListener('mousemove', e => {
+                const r = btn.getBoundingClientRect();
+                btn.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .18}px, ${(e.clientY - r.top - r.height / 2) * .22}px)`;
+            });
+            btn.addEventListener('mouseleave', () => {
+                if (window.anime) anime({ targets: btn, translateX: 0, translateY: 0, duration: 600, easing: 'easeOutElastic(1,.5)' });
+                else btn.style.transform = '';
+            });
+        });
+    } catch (e) { console.warn('magnetic', e); }
+
+    try {
+        if (!reduced) {
+            const hc = $('.hero-content');
+            let tx = 0, ty = 0, cx = 0, cy = 0;
+            $('#hero').addEventListener('mousemove', e => {
+                tx = (e.clientX / innerWidth - .5) * 14;
+                ty = (e.clientY / innerHeight - .5) * 10;
+            });
+            (function loop() {
+                cx += (tx - cx) * .06; cy += (ty - cy) * .06;
+                hc.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+                requestAnimationFrame(loop);
+            })();
+        }
+    } catch (e) { console.warn('parallax', e); }
+
+    /* ── 12. MODALE + TICKER + DIVERS ─────────────────────── */
+    try {
+        const modal = $('#contactModal');
+        $('#contactForm').addEventListener('submit', () => modal.classList.add('open'));
+        $('#modalOk').addEventListener('click', () => modal.classList.remove('open'));
+        modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+        addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open'); });
+    } catch (e) { console.warn('modal', e); }
+
+    try {
+        const tk = $('.ticker-track'); tk.innerHTML += tk.innerHTML;
+        $('#year').textContent = new Date().getFullYear();
+    } catch (e) { console.warn('ticker', e); }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            if (window._reelAPI) clearInterval(window._reelAPI._t);
+            // pause du reel via startReel/stopReel encapsulés :
+            try { const api = window._reelAPI; if (api) { api._paused = true; } } catch (e) {}
+            stopMusic();
+            if (actx && actx.state === 'running') actx.suspend();
+        } else {
+            try { if (window._reelAPI) window._reelAPI.startReel(); } catch (e) {}
+            if (!muted && actx) actx.resume().then(() => { master.gain.linearRampToValueAtTime(.55, actx.currentTime + .5); startMusic(); });
+        }
+    });
     </script>
 </body>
 </html>
