@@ -292,11 +292,19 @@
                         <h2 class="sec-title font-disp">MES<span class="glitch outline" data-text="PROJETS">PROJETS</span></h2>
                     </div>
                     <span class="sec-idx font-disp" aria-hidden="true">04</span>
-                </div>
+                <div class="project-filters">
+  <button class="p-filter active" data-filter="all">Tous</button>
+  <button class="p-filter" data-filter="opérationnel">Opérationnel</button>
+  <button class="p-filter" data-filter="déployé">Déployé</button>
+  <button class="p-filter" data-filter="surveillance">Surveillance</button>
+  <button class="p-filter" data-filter="chiffré">Chiffré</button>
+  <button class="p-filter" data-filter="analyse">Analyse</button>
+</div>
+</div>
 
                 <div class="projects-grid">
 
-                    <article class="project">
+                    <article class="project opérationnel">
                         <div class="project-media">
                             <span class="p-pattern" aria-hidden="true"></span>
                             <i class="p-icon fa-solid fa-robot"></i>
@@ -311,7 +319,7 @@
                         </div>
                     </article>
 
-                    <article class="project">
+                    <article class="project déployé">
                         <div class="project-media">
                             <span class="p-pattern" aria-hidden="true"></span>
                             <i class="p-icon fa-solid fa-envelope-open-text"></i>
@@ -326,7 +334,7 @@
                         </div>
                     </article>
 
-                    <article class="project">
+                    <article class="project surveillance">
                         <div class="project-media">
                             <span class="p-pattern" aria-hidden="true"></span>
                             <i class="p-icon fa-solid fa-network-wired"></i>
@@ -341,7 +349,7 @@
                         </div>
                     </article>
 
-                    <article class="project">
+                    <article class="project chiffré">
                         <div class="project-media">
                             <span class="p-pattern" aria-hidden="true"></span>
                             <i class="p-icon fa-solid fa-key"></i>
@@ -1095,7 +1103,29 @@
         modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
         addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open'); });
     } catch (e) { console.warn('modal', e); }
+// Filter buttons initialization
+try {
+  const filterButtons = $$('.p-filter');
+  filterButtons.forEach(btn => {
+    btn.setAttribute('aria-pressed', 'false');
+    btn.addEventListener('click', () => {
+      // Reset all buttons
+      filterButtons.forEach(b => {
+        b.setAttribute('aria-pressed', 'false');
+        b.classList.remove('active');
+      });
+      // Set active on clicked
+      btn.setAttribute('aria-pressed', 'true');
+      btn.classList.add('active');
 
+      const filter = btn.dataset.filter;
+      $$('.project').forEach(project => {
+        const matches = filter === 'all' || project.classList.contains(filter);
+        project.classList.toggle('is-hidden', !matches);
+      });
+    });
+  });
+} catch (e) { console.warn('filter', e); }
     try {
         const tk = $('.ticker-track'); tk.innerHTML += tk.innerHTML;
         $('#year').textContent = new Date().getFullYear();
